@@ -1,0 +1,14 @@
+name: Versioned Release Notes
+author: nhedger
+description: 'Store release notes in your repository and keep them in sync with your releases.'
+branding:
+  color: white
+  icon: terminal
+inputs:
+  files:
+    required: true
+    default: '.github/release-notes/*.md'
+    description: 'The files to use as release notes'
+runs:
+  using: 'node20'
+  main: 'dist/index.mjs'
