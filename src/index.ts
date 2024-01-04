@@ -1,13 +1,24 @@
-import { getInput } from "@actions/core";
-import { create as createGlob } from "@actions/glob";
+import { getInput } from '@actions/core';
+import { create } from '@actions/glob';
+const { Octokit } = require("@octokit/action");
+
 
 (async () => {
-	// Get files glob pattern from inputs
-	const files = getInput("files", { required: true, trimWhitespace: true });
+  const files = getInput("files", { required: true, trimWhitespace: true });
 
-	// Create a new glob
-	const glob = await createGlob(files);
-	for await (const file of glob.globGenerator()) {
-		console.log(file);
-	}
+  const glob = await create(files);
+
+  // Find all releases
+  const octokit = new Octokit();
+  const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
+  const releases = await octokit.paginate(octokit.repos.listReleases, {
+    owner,
+    repo,
+  });
+
+  console.log(releases)
+
+  for await (const file of glob.globGenerator()) {
+    console.log(file);
+  }
 })();
